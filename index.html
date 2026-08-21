@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCADE // SELECT GAME</title>
+<link rel="stylesheet" href="arcade.css">
+</head>
+<body>
+
+<div class="arcade-wrap" id="home-screen">
+  <div class="marquee">
+    <div class="marquee-title">ARCADE</div>
+    <div class="marquee-sub">Insert Coin :: Select Your Game</div>
+  </div>
+
+  <div class="nameplate">
+    <label for="player-name-input">Player</label>
+    <input type="text" id="player-name-input" maxlength="20" placeholder="Enter your name">
+  </div>
+
+  <div class="cabinet-grid">
+    <div class="cabinet cabinet-typing">
+      <div class="cabinet-glow"></div>
+      <div class="cabinet-tag">Racing // Typing</div>
+      <div class="cabinet-title">TYPE LEAGUE: FORZA</div>
+      <div class="cabinet-desc">Race the clock and keep your fingers on the road. Speed and accuracy both count toward your score.</div>
+      <div class="cabinet-meta"><span>60s Sprint</span><span>WPM Based</span></div>
+      <button class="play-btn" data-game="typing" data-src="typing-game.html">▶ PLAY</button>
+    </div>
+
+    <div class="cabinet cabinet-bomb">
+      <div class="cabinet-glow"></div>
+      <div class="cabinet-tag">Trivia // Bomb Defusal</div>
+      <div class="cabinet-title">DEFUSE PROTOCOL</div>
+      <div class="cabinet-desc">Guess the meme, cut the right wire. Three escalating levels, shared strikes, no do-overs.</div>
+      <div class="cabinet-meta"><span>3 Levels</span><span>Point Based</span></div>
+      <button class="play-btn" data-game="bomb" data-src="bomb-game.html">▶ PLAY</button>
+    </div>
+  </div>
+
+  <div class="leaderboards">
+    <div class="lb-panel">
+      <h3>TOP RACERS</h3>
+      <div id="lb-typing"></div>
+    </div>
+    <div class="lb-panel">
+      <h3>TOP AGENTS</h3>
+      <div id="lb-bomb"></div>
+    </div>
+  </div>
+</div>
+
+<div class="game-frame-overlay" id="game-frame-overlay">
+  <button class="exit-arcade-btn" id="exit-arcade-btn">◄ ARCADE</button>
+  <iframe id="game-frame" src="about:blank" title="game"></iframe>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="arcade.js"></script>
+</body>
+</html>

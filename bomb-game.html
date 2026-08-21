@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEFUSE :: Trivia </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bomb-game.css">
+</head>
+<body>
+
+
+<audio id="bg-music" loop preload="auto">
+  <source src="bomb-music.mp3" type="audio/mpeg">
+</audio>
+<audio id="tick-sound" loop preload="auto">
+  <source src="tick.mp3" type="audio/mpeg">
+</audio>
+<audio id="wire-cut-sound" preload="auto">
+  <source src="wire-cut.mp3" type="audio/mpeg">
+</audio>
+<audio id="wire-wrong-sound" preload="auto">
+  <source src="wire-cut.mp3" type="audio/mpeg">
+</audio>
+<audio id="explosion-sound" preload="auto">
+  <source src="explosion.mp3" type="audio/mpeg">
+</audio>
+<audio id="defuse-win-sound" preload="auto">
+  <source src="defuse-win.mp3" type="audio/mpeg">
+</audio>
+
+<div class="stage">
+  <div class="bomb" id="bomb">
+    <span class="bolt tl"></span><span class="bolt tr"></span>
+    <span class="bolt bl"></span><span class="bolt br"></span>
+    <div class="header-row">
+      <div>
+        <div class="label">Ordnance Disposal Unit</div>
+        <div class="title">DEFUSE<span>//</span>PROTOCOL</div>
+      </div>
+      <div class="header-right">
+        <div class="music-control">
+          <button class="music-btn" id="music-toggle-btn" title="Mute/unmute music" aria-label="Toggle music">&#9835;</button>
+          <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50" aria-label="Music volume">
+          <span class="music-track-label" id="music-track-label">MUSIC ON</span>
+        </div>
+        <div class="label" id="phase-label">STANDBY</div>
+      </div>
+    </div>
+    <div class="level-bar" id="level-bar">
+      <div class="level-bar-name" id="level-name">LEVEL 1 // guess the meme</div>
+      <div class="level-bar-desc" id="level-desc">Press ARM SEQUENCE to begin.</div>
+    </div>
+    <div class="status-strip">
+      <div class="display-panel">
+        <div class="label">Time Remaining</div>
+        <div class="timer" id="timer">01:50</div>
+      </div>
+      <div class="display-panel" style="flex:0 0 120px;">
+        <div class="label">Score</div>
+        <div class="score-num" id="score">000</div>
+      </div>
+      <div class="display-panel" style="flex:0 0 130px;">
+        <div class="label">Strikes</div>
+        <div class="strikes-row" id="strikes"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="q-index" id="q-index">QUESTION  1 / 5</div>
+      <div class="meme-pane">
+        <img id="meme-img" src="" alt="meme">
+      </div>
+      <div class="meme-caption" id="meme-caption">What does this mean?</div>
+    </div>
+    <div class="wires" id="wires"></div>
+    <div class="footer-row">
+      <div class="hint">Cut the correct wire to defuse. Wrong cut = strike.</div>
+      <button class="btn" id="start-btn">ARM SEQUENCE</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay prelevel-overlay" id="prelevel-overlay">
+  <div>
+    <div class="prelevel-tag">INCOMING BRIEFING</div>
+    <div class="prelevel-name" id="prelevel-name">LEVEL 1 // Guess the meme</div>
+    <div class="prelevel-desc-box">
+      <div class="prelevel-desc-label">Objective</div>
+      <div class="prelevel-desc-text" id="prelevel-desc">Cut the correct wire for each meme.</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay level-overlay" id="level-overlay">
+  <div>
+    <div class="level-overlay-tag" id="level-overlay-tag">ROUND CLEAR</div>
+    <h1 id="level-overlay-title">LEVEL 1 COMPLETE</h1>
+    <p id="level-overlay-sub">Nice work. Next round incoming.</p>
+    <div class="level-overlay-next" id="level-overlay-next">
+      <div class="level-overlay-next-name" id="next-level-name">LEVEL 2 // Guess the anime character</div>
+      <div class="level-overlay-next-desc" id="next-level-desc">7 questions, 4 lives. Stay sharp.</div>
+    </div>
+    <button class="btn green" id="continue-btn">CONTINUE</button>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div>
+    <h1 id="overlay-title">BOOM</h1>
+    <p id="overlay-sub">The device has detonated.</p>
+    <div class="score-final" id="overlay-score">SCORE: 000</div>
+    <button class="btn green" id="retry-btn">RESET DEVICE</button>
+  </div>
+</div>
+<script src="bomb-game.js"></script>
+</body>
+</html>

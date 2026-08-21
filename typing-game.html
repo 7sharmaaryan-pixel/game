@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>TYPE LEAGUE · FORZA</title>
+    <link rel="stylesheet" href="typing-game.css">
+</head>
+<body>
+
+    <!-- NOTE: place startscreen.mp4, maingame.mp4 and audio.mp4 in the same folder as this HTML file -->
+    <video class="video-bg" id="bgVideo" autoplay muted playsinline loop>
+        <source src="startscreen.mp4" type="video/mp4">
+    </video>
+
+    <audio id="raceAudio" preload="auto" loop style="opacity:0; position:absolute; pointer-events:none; width:0; height:0;">
+        <source src="audio.mp4" type="audio/mp4">
+    </audio>
+
+    <div class="race-ended-overlay" id="raceEndedOverlay">
+        <div class="race-ended-content">
+            <div class="race-ended-text">RACE ENDED</div>
+            <div class="race-ended-sub">🏁 Check your results below 🏁</div>
+        </div>
+    </div>
+
+    <div class="name-modal" id="nameModal">
+        <div class="modal-box">
+            <h2> 🏁 TYPE LEAGUE</h2>
+            <div class="sub-text">
+                Start your engine and put your typing skills to the test.<br>
+                Type the words on the screen to move your car down the track.<br>
+                Correct letters turn green, while mistakes stop your progress until you fix them.<br>
+                It's not just about typing fast. Accuracy matters too.
+            </div>
+            <label for="playerNameInput">Driver name</label>
+            <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" autofocus aria-label="Enter your name">
+            <button class="btn btn-primary" id="startGameBtn">START RACE</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameContainer">
+        <div class="race-panel" id="racePanel">
+            <div id="countdownDisplay" class="countdown" style="display:none;">3</div>
+            <div id="raceUI">
+                <div class="game-title">TYPE LEAGUE</div>
+                <div class="typing-text" id="typingDisplay"></div>
+                <input type="text" id="type-input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" disabled aria-label="Type the text shown above">
+                <div class="race-stats">
+                    <span>ACCURACY <span id="accuracyDisplay">100%</span></span>
+                    <span>TIME <span id="timerDisplay">1:00</span></span>
+                </div>
+            </div>
+            <div class="end-screen" id="endScreen">
+                <h2>🏁 RACE FINISHED</h2>
+                <div class="end-stats-grid">
+                    <div><span>WPM</span> <span id="finalWpm">0</span></div>
+                    <div><span>ACCURACY</span> <span id="finalAcc">0%</span></div>
+                    <div><span>WORDS TYPED</span> <span id="finalWords">0</span></div>
+                    <div><span>RANK</span> <span id="finalRank">—</span></div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="playAgainBtn">PLAY AGAIN</button>
+                    <button class="btn" id="leaderboardToggleBtn">🏆 LEADERBOARD</button>
+                </div>
+                <div class="leaderboard-section" id="leaderboardSection"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="typing-game.js"></script>
+</body>
+</html>

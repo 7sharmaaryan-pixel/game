@@ -1,0 +1,4 @@
+maingame.mp4 filter=lfs diff=lfs merge=lfs -text
+bcd.jpg filter=lfs diff=lfs merge=lfs -text
+audio.mp4 filter=lfs diff=lfs merge=lfs -text
+aaa.jpg filter=lfs diff=lfs merge=lfs -text
