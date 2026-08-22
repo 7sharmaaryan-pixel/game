@@ -14,9 +14,12 @@
     <div class="marquee-sub">Insert Coin :: Select Your Game</div>
   </div>
 
-  <div class="nameplate">
-    <label for="player-name-input">Player</label>
-    <input type="text" id="player-name-input" maxlength="20" placeholder="Enter your name">
+  <div class="control-row">
+    <div class="nameplate">
+      <label for="player-name-input">Player</label>
+      <input type="text" id="player-name-input" maxlength="20" placeholder="Enter your name">
+    </div>
+    <div class="audio-toggle" id="audio-toggle">♪ MUSIC: ON</div>
   </div>
 
   <div class="cabinet-grid">
@@ -37,6 +40,15 @@
       <div class="cabinet-meta"><span>3 Levels</span><span>Point Based</span></div>
       <button class="play-btn" data-game="bomb" data-src="bomb-game.html">▶ PLAY</button>
     </div>
+
+    <div class="cabinet cabinet-shooter">
+      <div class="cabinet-glow"></div>
+      <div class="cabinet-tag">Arcade // Space Shooter</div>
+      <div class="cabinet-title">NEON INTERCEPTOR</div>
+      <div class="cabinet-desc">Waves of drones incoming. Dodge the fire, blast them down, and rack up score before your last life runs out.</div>
+      <div class="cabinet-meta"><span>3 Lives</span><span>Endless Waves</span></div>
+      <button class="play-btn" data-game="shooter" data-src="space-shooter.html">▶ PLAY</button>
+    </div>
   </div>
 
   <div class="leaderboards">
@@ -48,6 +60,10 @@
       <h3>TOP AGENTS</h3>
       <div id="lb-bomb"></div>
     </div>
+    <div class="lb-panel">
+      <h3>TOP PILOTS</h3>
+      <div id="lb-shooter"></div>
+    </div>
   </div>
 </div>
 
@@ -57,6 +73,41 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!--
+  BACKGROUND MUSIC FILE
+  ---------------------
+  Put your music file inside an "assets" folder next to this HTML file, e.g.:
+
+    /arcade
+      ├── index.html
+      ├── arcade.css
+      ├── arcade.js
+      └── assets/
+            └── arcade-theme.mp3   <-- your music file goes here
+
+  If your file has a different name or extension (.ogg, .wav, etc.),
+  just update the src="" path below to match it.
+  "loop" makes it repeat automatically. Volume/mute is controlled
+  from arcade.js via the ♪ MUSIC: ON/OFF toggle above.
+-->
+<audio id="bg-music" src="arcade.mp3" loop preload="auto"></audio>
+
+<!--
+  PLAY-BUTTON LAUNCH SOUND
+  ------------------------
+  Plays once whenever any "▶ PLAY" cabinet button is clicked.
+  Put the sound file in the same "assets" folder, e.g.:
+
+    /arcade
+      └── assets/
+            ├── arcade-theme.mp3
+            └── launch.mp3   <-- your click/launch sound goes here
+
+  If your file has a different name or extension, update src="" below.
+  No "loop" here since it should just play once per click.
+-->
+<audio id="launch-sfx" src="launch.mp3" preload="auto"></audio>
 
 <script src="arcade.js"></script>
 </body>

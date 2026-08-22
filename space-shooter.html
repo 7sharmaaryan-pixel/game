@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON INTERCEPTOR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="space.css">
+</head>
+<body>
+
+<div class="shooter-wrap">
+
+  <div class="hud">
+    <div class="hud-left">
+      <div class="health-wrap">
+        <span class="health-label">HULL</span>
+        <div class="health-bar"><div class="health-fill" id="health-fill"></div></div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <span class="level" id="hud-level">SECTOR 1</span>
+      <span class="score" id="hud-score">SCORE 0</span>
+    </div>
+  </div>
+
+  <button class="music-toggle" id="music-toggle" title="Toggle music">♪ MUSIC: OFF</button>
+
+  <div class="damage-flash" id="damage-flash"></div>
+
+  <canvas id="game-canvas" width="700" height="500"></canvas>
+
+  <!-- START SCREEN -->
+  <div class="overlay" id="start-overlay">
+    <h1>NEON INTERCEPTOR</h1>
+    <div class="sub">Three sectors of drone swarms are inbound. Dodge their fire, blast them down, and survive.</div>
+
+    <div class="picker">
+      <div class="picker-label">SELECT SHIP</div>
+      <div class="ship-options" id="ship-options">
+        <button class="ship-opt selected" data-ship="0" type="button">
+          <svg viewBox="0 0 40 40"><polygon points="20,4 34,34 20,26 6,34"></polygon></svg>
+          <span>INTERCEPTOR</span>
+        </button>
+        <button class="ship-opt" data-ship="1" type="button">
+          <svg viewBox="0 0 40 40"><polygon points="20,2 30,20 38,34 20,24 2,34 10,20"></polygon></svg>
+          <span>FALCON</span>
+        </button>
+        <button class="ship-opt" data-ship="2" type="button">
+          <svg viewBox="0 0 40 40"><polygon points="20,3 32,16 20,36 8,16"></polygon></svg>
+          <span>VANGUARD</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="controls-hint">
+      <span>◄ ► / A D — Move</span>
+      <span>SPACE — Fire</span>
+    </div>
+    <button id="start-btn">▶ START</button>
+  </div>
+
+  <!-- LEVEL TRANSITION -->
+  <div class="overlay level-overlay" id="level-overlay" style="display:none;">
+    <h1 id="level-overlay-title">SECTOR 2</h1>
+    <div class="sub" id="level-overlay-sub">Enemy resistance is intensifying...</div>
+  </div>
+
+  <!-- DEATH / GAME OVER -->
+  <div class="overlay gameover-overlay" id="gameover-overlay" style="display:none;">
+    <h1 class="you-died" id="you-died-title">YOU DIED</h1>
+    <div class="final-block" id="final-block">
+      <div class="big-score" id="final-score">SCORE 0</div>
+      <div class="final-level" id="final-level">REACHED SECTOR 1</div>
+      <button id="restart-btn">↻ RESTART</button>
+    </div>
+  </div>
+
+  <div class="touch-controls" id="touch-controls">
+    <div class="move-pair">
+      <div class="touch-btn" id="touch-left">◄</div>
+      <div class="touch-btn" id="touch-right">►</div>
+    </div>
+    <div class="touch-btn touch-fire" id="touch-fire">●</div>
+  </div>
+
+</div>
+<audio id="bg-music" src="space-theme.mp3" loop preload="auto"></audio>
+
+<script src="space.js"></script>
+</body>
+</html>
