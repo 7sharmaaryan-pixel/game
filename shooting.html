@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEAD EYE ALLEY — Zombie Shooting Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shooting.css">
+</head>
+<body>
+
+<div class="gallery-wrap">
+
+  <div class="bulb-strip top"></div>
+  <div class="bulb-strip bottom"></div>
+  <div class="bulb-strip left"></div>
+  <div class="bulb-strip right"></div>
+
+  <header class="marquee">
+    <h1>DEAD EYE <span>ALLEY</span></h1>
+  </header>
+
+  <div class="hud-board">
+    <div class="hud-cell">
+      <span class="hud-label">SCORE</span>
+      <span class="hud-value" id="hud-score">0000</span>
+    </div>
+    <div class="hud-cell">
+      <span class="hud-label">TIME</span>
+      <span class="hud-value" id="hud-time">60</span>
+    </div>
+    <div class="hud-cell">
+      <span class="hud-label">COMBO</span>
+      <span class="hud-value" id="hud-combo">x1</span>
+    </div>
+    <div class="hud-cell ammo-cell">
+      <span class="hud-label">AMMO</span>
+      <div class="ammo-slots" id="ammo-slots"></div>
+    </div>
+    <button class="ticket-btn small" id="music-toggle" type="button">♪ OFF</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="range-canvas" width="900" height="520"></canvas>
+    <div class="reload-bar" id="reload-bar"><div class="reload-fill" id="reload-fill"></div></div>
+    <div class="crosshair" id="crosshair">
+      <div class="ring"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="hit-marker" id="hit-marker"></div>
+
+    <!-- START -->
+    <div class="overlay" id="start-overlay">
+      <h2>STEP RIGHT UP</h2>
+      <p class="sub">Sixty seconds. Five lanes. They keep climbing the fence — you keep them down.<br>Headshots pay double. Reload before you're caught dry.</p>
+      <div class="controls-hint">
+        <span>MOUSE — Aim</span>
+        <span>CLICK — Shoot</span>
+        <span>R — Reload</span>
+      </div>
+      <button class="ticket-btn" id="start-btn">▶ PULL THE LEVER</button>
+    </div>
+
+    <!-- GAME OVER -->
+    <div class="overlay" id="gameover-overlay" style="display:none;">
+      <h2 class="closed-sign">GALLERY CLOSED</h2>
+      <div class="final-block" id="final-block">
+        <div class="stat-row"><span>FINAL SCORE</span><strong id="final-score">0</strong></div>
+        <div class="stat-row"><span>ACCURACY</span><strong id="final-accuracy">0%</strong></div>
+        <div class="stat-row"><span>BEST COMBO</span><strong id="final-combo">x1</strong></div>
+        <div class="stat-row highscore"><span>HIGH SCORE</span><strong id="final-highscore">0</strong></div>
+        <button class="ticket-btn" id="restart-btn">↻ ONE MORE ROUND</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">Wooden targets only — nobody actually gets hurt at the gallery.</p>
+</div>
+
+<audio id="bg-music" src="range-theme.mp3" loop preload="auto"></audio>
+
+<script src="shooting.js"></script>
+</body>
+</html>

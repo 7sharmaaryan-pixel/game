@@ -1,0 +1,200 @@
+:root{
+  --void:#0d0b0a;
+  --ash:#1c1815;
+  --ash-light:#26211c;
+  --parchment:#d8d2c4;
+  --rune-gold:#c9a227;
+  --rune-gold-dim:#7a611a;
+  --ember:#8a2418;
+  --ember-bright:#c1402c;
+  --rot:#4a6b4f;
+  --frost:#5b7d8c;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(201,162,39,0.07), transparent 55%),
+    var(--void);
+  color:var(--parchment);
+  font-family:'EB Garamond', serif;
+  padding:18px;
+}
+
+.game-wrap{
+  width:min(980px, 98vw);
+  position:relative;
+}
+
+.screen{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+
+/* ===== title ===== */
+.title-screen{ padding:80px 20px; gap:14px; }
+.eyebrow{
+  font-family:'Cinzel', serif; font-size:13px; letter-spacing:5px;
+  color:var(--rune-gold-dim); text-transform:uppercase; margin:0;
+}
+.game-title{
+  font-family:'Cinzel Decorative', serif;
+  font-size:clamp(36px,7vw,64px);
+  line-height:1.05;
+  letter-spacing:3px;
+  color:var(--rune-gold);
+  text-shadow:0 0 22px rgba(201,162,39,0.35);
+  margin:6px 0;
+}
+.game-title span{ color:var(--parchment); text-shadow:0 0 16px rgba(216,210,196,0.25); }
+.tagline{ font-style:italic; color:rgba(216,210,196,0.7); max-width:460px; margin:6px 0 20px; }
+
+/* ===== sigil buttons ===== */
+.sigil-btn{
+  font-family:'Cinzel', serif;
+  font-size:15px; letter-spacing:1px;
+  color:var(--parchment);
+  background:var(--ash);
+  border:1px solid var(--rune-gold-dim);
+  border-radius:3px;
+  padding:12px 26px;
+  cursor:pointer;
+  transition: border-color .15s, background .15s, transform .08s;
+}
+.sigil-btn:hover:not(:disabled){ border-color:var(--rune-gold); background:var(--ash-light); }
+.sigil-btn:active:not(:disabled){ transform:translateY(2px); }
+.sigil-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+.sigil-btn.primary{ background:linear-gradient(180deg, var(--ash-light), var(--ash)); color:var(--rune-gold); border-color:var(--rune-gold); }
+
+/* ===== character select ===== */
+.select-screen{ padding:24px 10px 10px; width:100%; }
+.screen-title{ font-family:'Cinzel', serif; font-size:20px; letter-spacing:2px; color:var(--rune-gold); margin:0 0 20px; }
+
+.roster{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  width:100%;
+  max-width:940px;
+}
+.fighter-card{
+  background:linear-gradient(180deg, var(--ash), var(--void));
+  border:1px solid var(--rune-gold-dim);
+  border-radius:4px;
+  padding:14px 12px 16px;
+  cursor:pointer;
+  position:relative;
+  transition: border-color .15s, transform .1s;
+}
+.fighter-card:hover{ border-color:var(--rune-gold); transform:translateY(-2px); }
+.fighter-card.selected{ border-color:var(--rune-gold); box-shadow:0 0 0 1px var(--rune-gold), 0 0 18px rgba(201,162,39,0.25); }
+.fighter-card::before{ content:''; position:absolute; inset:5px; border:1px solid rgba(201,162,39,0.2); pointer-events:none; }
+
+.sigil{ width:64px; height:64px; margin:4px auto 12px; border-radius:50%; display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--rune-gold-dim); background:radial-gradient(circle, rgba(201,162,39,0.08), transparent 70%); }
+.sigil svg.pixel-avatar{ width:46px; height:46px; image-rendering:pixelated; image-rendering:crisp-edges; filter:drop-shadow(0 1px 1px rgba(0,0,0,0.5)); }
+
+.cname{ font-family:'Cinzel', serif; font-size:16px; font-weight:600; margin:0 0 2px; }
+.cclass{ font-family:'Cinzel', serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; margin:0 0 8px; }
+.cflavor{ font-size:13px; font-style:italic; color:rgba(216,210,196,0.72); line-height:1.4; margin:0 0 10px; min-height:52px; }
+
+.stat-label{ font-size:10px; letter-spacing:1px; color:rgba(216,210,196,0.55); display:flex; justify-content:space-between; margin-top:6px; }
+.stat-bar-mini{ height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; margin-top:2px; }
+.stat-bar-mini .f{ height:100%; }
+
+.knight .cclass, .knight .stat-bar-mini .f{ color:var(--rune-gold); background:var(--rune-gold); }
+.wraith .cclass, .wraith .stat-bar-mini .f{ color:var(--frost); background:var(--frost); }
+.sorceress .cclass, .sorceress .stat-bar-mini .f{ color:var(--rot); background:var(--rot); }
+.golem .cclass, .golem .stat-bar-mini .f{ color:var(--ember); background:var(--ember); }
+
+.select-footer{ margin-top:22px; display:flex; align-items:center; gap:20px; }
+.picked-line{ font-family:'Cinzel', serif; font-size:14px; letter-spacing:1px; }
+.picked-line strong{ color:var(--rune-gold); }
+
+/* ===== fight screen / HUD ===== */
+.fight-screen{ width:100%; align-items:stretch; }
+.hud{ display:flex; align-items:flex-start; gap:14px; margin-bottom:10px; }
+.fighter-hud{ flex:1; }
+.fighter-hud.right .hud-name-row{ flex-direction:row-reverse; }
+.hud-name-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.hud-name{ font-family:'Cinzel', serif; font-size:14px; letter-spacing:1px; color:var(--parchment); }
+.pips{ display:flex; gap:4px; }
+.pips span{ width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid var(--rune-gold-dim); display:inline-block; }
+.pips span.won{ background:var(--rune-gold); }
+
+.bar{ height:12px; border-radius:2px; background:rgba(255,255,255,0.08); overflow:hidden; margin-bottom:5px; border:1px solid rgba(201,162,39,0.15); }
+.bar .fill{ height:100%; transition: width .15s linear; }
+.bar.hp .fill{ background:linear-gradient(90deg, var(--ember), var(--ember-bright)); width:100%; }
+.bar.stam .fill{ height:60%; background:linear-gradient(90deg, var(--rune-gold-dim), var(--rune-gold)); width:100%; }
+.fighter-hud.right .bar .fill{ float:right; }
+
+.hud-center{ text-align:center; padding-top:2px; min-width:80px; }
+.round-timer{ font-family:'Cinzel Decorative', serif; font-size:26px; color:var(--rune-gold); }
+.round-label{ font-family:'Cinzel', serif; font-size:11px; letter-spacing:2px; color:rgba(216,210,196,0.6); }
+
+.stage{
+  position:relative;
+  width:100%;
+  aspect-ratio: 960/480;
+  border-radius:4px;
+  overflow:hidden;
+  border:1px solid var(--rune-gold-dim);
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+}
+#arena-canvas{ display:block; width:100%; height:100%; }
+
+.floating-text-layer{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:6; }
+.floater{
+  position:absolute;
+  font-family:'Cinzel', serif;
+  font-weight:600;
+  font-size:16px;
+  transform:translate(-50%,-50%);
+  animation: floatUp .8s ease-out forwards;
+  white-space:nowrap;
+}
+.floater.parry{ color:var(--frost); font-size:20px; }
+.floater.guardbreak{ color:var(--ember-bright); font-size:19px; }
+.floater.dmg{ color:var(--parchment); }
+.floater.combo{ color:var(--rune-gold); }
+@keyframes floatUp{
+  0%{ opacity:1; transform:translate(-50%,-50%) translateY(0) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-50%) translateY(-46px) scale(1.15); }
+}
+
+.overlay{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px;
+  background: radial-gradient(ellipse at center, rgba(13,11,10,0.75) 0%, rgba(13,11,10,0.95) 78%);
+  text-align:center;
+  z-index:10;
+  padding:20px;
+}
+.overlay h2{
+  font-family:'Cinzel Decorative', serif;
+  font-size:clamp(26px,5vw,40px);
+  color:var(--rune-gold);
+  text-shadow:0 0 16px rgba(201,162,39,0.4);
+  margin:0;
+}
+.round-banner h2{ animation: bannerPulse 1.4s ease-out; }
+@keyframes bannerPulse{ 0%{ opacity:0; transform:scale(0.85);} 20%{ opacity:1; transform:scale(1.05);} 30%{ transform:scale(1);} 80%{ opacity:1;} 100%{ opacity:0; } }
+
+#match-sub{ font-style:italic; color:rgba(216,210,196,0.75); max-width:420px; }
+.match-actions{ display:flex; gap:14px; margin-top:8px; }
+
+.controls-strip{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:16px;
+  margin-top:10px; padding:8px;
+  font-size:12px; letter-spacing:0.5px; color:rgba(216,210,196,0.55);
+}
+.controls-strip b{ color:var(--rune-gold-dim); }
+
+@media (max-width:720px){
+  .roster{ grid-template-columns:repeat(2,1fr); }
+  .hud{ flex-direction:column; }
+  .hud-center{ order:-1; }
+}

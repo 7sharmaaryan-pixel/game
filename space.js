@@ -26,6 +26,48 @@
     touchControls.classList.add('show');
   }
 
+  /* ================= BACKGROUND MUSIC (real audio file) ================= */
+  const bgMusic = document.getElementById('bg-music');
+  bgMusic.volume = 0.45; // tweak to taste
+  let musicEnabled = true; // user preference toggle; true = wants music on
+
+  function fadeAudio(el, target, duration = 400){
+    const start = el.volume;
+    const startTime = performance.now();
+    function step(now){
+      const t = Math.min((now - startTime) / duration, 1);
+      el.volume = start + (target - start) * t;
+      if(t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function playMusic(){
+    if(!musicEnabled) return;
+    bgMusic.currentTime = 0;
+    bgMusic.volume = 0;
+    bgMusic.play().catch(err => console.warn('Playback blocked until user interaction:', err));
+    fadeAudio(bgMusic, 0.45, 500);
+  }
+
+  function stopMusic(){
+    fadeAudio(bgMusic, 0, 400);
+    setTimeout(() => bgMusic.pause(), 420);
+  }
+
+  musicToggle.addEventListener('click', () => {
+    musicEnabled = !musicEnabled;
+    if(musicEnabled){
+      musicToggle.textContent = '♪ MUSIC: ON';
+      musicToggle.classList.add('on');
+      if(running) playMusic();
+    } else {
+      musicToggle.textContent = '♪ MUSIC: OFF';
+      musicToggle.classList.remove('on');
+      stopMusic();
+    }
+  });
+
   /* ================= SHIP DESIGNS ================= */
   // Each design is a draw function called with the canvas context already
   // translated to the player's position. Index matches data-ship on the
@@ -102,62 +144,6 @@
   ];
   let levelIndex = 0;
   let levelTransitionActive = false;
-
-  /* ================= AUDIO (procedural, no external files) ================= */
-  const MusicEngine = (function(){
-    let ctxA = null, masterGain = null, timer = null, step = 0, on = false;
-    const bass = [55, 55, 82.4, 65.4, 55, 55, 98, 73.4]; // A1-ish 8-bit bassline
-    function ensureCtx(){
-      if(!ctxA){
-        ctxA = new (window.AudioContext || window.webkitAudioContext)();
-        masterGain = ctxA.createGain();
-        masterGain.gain.value = 0.06;
-        masterGain.connect(ctxA.destination);
-      }
-    }
-    function playNote(freq, duration){
-      const osc = ctxA.createOscillator();
-      const g = ctxA.createGain();
-      osc.type = 'square';
-      osc.frequency.value = freq;
-      g.gain.value = 0.9;
-      g.gain.exponentialRampToValueAtTime(0.001, ctxA.currentTime + duration);
-      osc.connect(g);
-      g.connect(masterGain);
-      osc.start();
-      osc.stop(ctxA.currentTime + duration);
-    }
-    function tick(){
-      playNote(bass[step % bass.length], 0.18);
-      if(step % 2 === 0) playNote(bass[step % bass.length] * 2, 0.09);
-      step++;
-    }
-    return {
-      toggle(){
-        ensureCtx();
-        if(ctxA.state === 'suspended') ctxA.resume();
-        on = !on;
-        if(on){
-          tick();
-          timer = setInterval(tick, 220);
-        } else {
-          clearInterval(timer);
-        }
-        return on;
-      },
-      isOn(){ return on; },
-      stop(){
-        on = false;
-        clearInterval(timer);
-      }
-    };
-  })();
-
-  musicToggle.addEventListener('click', () => {
-    const isOn = MusicEngine.toggle();
-    musicToggle.textContent = isOn ? '♪ MUSIC: ON' : '♪ MUSIC: OFF';
-    musicToggle.classList.toggle('on', isOn);
-  });
 
   /* ================= GAME STATE ================= */
   let running = false;
@@ -296,9 +282,7 @@
   function endGame(){
     running = false;
     cancelAnimationFrame(raf);
-    MusicEngine.stop();
-    musicToggle.textContent = '♪ MUSIC: OFF';
-    musicToggle.classList.remove('on');
+    stopMusic();
 
     finalScoreEl.textContent = 'SCORE ' + score;
     finalLevelEl.textContent = 'REACHED ' + LEVELS[levelIndex].name;
@@ -489,6 +473,7 @@
     running = true;
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(loop);
+    playMusic();
   }
 
   startBtn.addEventListener('click', startGame);

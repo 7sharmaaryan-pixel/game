@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASHEN DUELISTS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fight.css">
+</head>
+<body>
+
+<div class="game-wrap" id="game-wrap">
+
+  <!-- ============ TITLE SCREEN ============ -->
+  <section class="screen title-screen" id="title-screen">
+    <p class="eyebrow">An original dark-fantasy duel</p>
+    <h1 class="game-title">ASHEN<br><span>DUELISTS</span></h1>
+    <p class="tagline">Stamina breaks before bone does. Guard wrong and you'll learn that twice.</p>
+    <button class="sigil-btn primary" id="to-select-btn">▶ Begin</button>
+  </section>
+
+  <!-- ============ CHARACTER SELECT ============ -->
+  <section class="screen select-screen" id="select-screen" style="display:none;">
+    <h2 class="screen-title">Choose your fighter</h2>
+    <div class="roster" id="roster"></div>
+    <div class="select-footer">
+      <div class="picked-line">
+        <span>You:</span> <strong id="picked-name">—</strong>
+      </div>
+      <button class="sigil-btn primary" id="fight-btn" disabled>⚔ Enter the circle</button>
+    </div>
+  </section>
+
+  <!-- ============ FIGHT SCREEN ============ -->
+  <section class="screen fight-screen" id="fight-screen" style="display:none;">
+
+    <div class="hud">
+      <div class="fighter-hud" id="hud-p1">
+        <div class="hud-name-row"><span class="hud-name" id="p1-name">—</span><span class="pips" id="p1-pips"></span></div>
+        <div class="bar hp"><div class="fill" id="p1-hp-fill"></div></div>
+        <div class="bar stam"><div class="fill" id="p1-stam-fill"></div></div>
+      </div>
+
+      <div class="hud-center">
+        <div class="round-timer" id="round-timer">60</div>
+        <div class="round-label">ROUND <span id="round-num">1</span></div>
+      </div>
+
+      <div class="fighter-hud right" id="hud-p2">
+        <div class="hud-name-row"><span class="pips" id="p2-pips"></span><span class="hud-name" id="p2-name">—</span></div>
+        <div class="bar hp"><div class="fill" id="p2-hp-fill"></div></div>
+        <div class="bar stam"><div class="fill" id="p2-stam-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <canvas id="arena-canvas" width="960" height="480"></canvas>
+      <div class="floating-text-layer" id="floating-layer"></div>
+
+      <div class="overlay round-banner" id="round-banner" style="display:none;">
+        <h2 id="round-banner-text">ROUND 1</h2>
+      </div>
+
+      <div class="overlay match-overlay" id="match-overlay" style="display:none;">
+        <h2 id="match-title">VICTORY</h2>
+        <p id="match-sub">Sir Vhalos stands over the ashes.</p>
+        <div class="match-actions">
+          <button class="sigil-btn" id="rematch-btn">↻ Rematch</button>
+          <button class="sigil-btn" id="change-fighter-btn">⇤ Change fighter</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-strip">
+      <span><b>A/D</b> Move</span>
+      <span><b>W</b> Jump</span>
+      <span><b>J</b> Light</span>
+      <span><b>K</b> Heavy</span>
+      <span><b>L</b> Special</span>
+      <span><b>Space</b> Block / Parry (tap)</span>
+    </div>
+  </section>
+
+</div>
+
+<script src="fight.js"></script>
+</body>
+</html>
