@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CITY RUMBLE</title>
+<link rel="stylesheet" href="re3.css">
+</head>
+<body>
+<div id="game">
+  <div id="fog"></div>
+  <div id="world">
+    <div id="arena"></div>
+ 
+    <div id="leon" class="character">
+      <img id="leonImg" src="leon_idle.png">
+    </div>
+    <div id="mrx" class="character">
+      <img id="mrxImg" src="mrx_idle.png">
+    </div>
+  </div>
+ 
+  <div id="hud">
+    <div class="panel">
+      <div class="name">LEON</div>
+      <div class="bar"><div id="playerHp" class="fill"></div></div>
+      <div class="stats">HP <span id="pHpText">100</span></div>
+    </div>
+    <div class="panel">
+      <div class="name">THE WARDEN</div>
+      <div class="bar"><div id="bossHp" class="fill"></div></div>
+      <div class="stats">HP <span id="bHpText">1000</span></div>
+    </div>
+  </div>
+ 
+<div id="message"></div>
+  <div id="controls">
+    <kbd>←</kbd><kbd>→</kbd> Move &nbsp;
+    <kbd>J</kbd> Punch &nbsp;
+    <kbd>K</kbd> Kick &nbsp;
+    <kbd>L</kbd> Defend &nbsp;
+    <kbd>SPACE</kbd> Dodge
+  </div>
+ 
+  <div id="start">
+    <h1>CITY RUMBLE</h1>
+    <div class="small">A short, static-pose boss fight. Time your attacks and punish the boss when he is vulnerable.</div>
+    <button onclick="startGame()">START FIGHT</button>
+  </div>
+ 
+  <div id="end" class="hidden">
+    <h1 id="endTitle">BOSS DEFEATED</h1>
+    <div class="small" id="endText"></div>
+    <button onclick="location.reload()">FIGHT AGAIN</button>
+  </div>
+</div>
+ 
+<script src="re3.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 (function(){
   const STORAGE_NAME_KEY = 'arcade_player_name';
-  const STORAGE_SCORES_KEY = 'arcade_scores'; // { typing: [], bomb: [], shooter: [] }
+  const STORAGE_SCORES_KEY = 'arcade_scores'; // { typing: [], bomb: [], shooter: [], re3: [] }
   const STORAGE_AUDIO_KEY = 'arcade_audio_muted';
   const MAX_ENTRIES_SHOWN = 8;
 
@@ -13,11 +13,12 @@
   const lbTypingEl = document.getElementById('lb-typing');
   const lbBombEl = document.getElementById('lb-bomb');
   const lbShooterEl = document.getElementById('lb-shooter');
+  const lbRe3El = document.getElementById('lb-re3');
   const audioToggleBtn = document.getElementById('audio-toggle');
   const bgMusicEl = document.getElementById('bg-music');
   const launchSfxEl = document.getElementById('launch-sfx');
 
-  const GAME_LABELS = { typing: 'TYPE LEAGUE', bomb: 'DEFUSE PROTOCOL', shooter: 'NEON INTERCEPTOR' };
+  const GAME_LABELS = { typing: 'TYPE LEAGUE', bomb: 'DEFUSE PROTOCOL', shooter: 'NEON INTERCEPTOR', re3: 'CITY RUMBLE' };
 
   /* ---------------- name + scores ---------------- */
 
@@ -30,9 +31,9 @@
 
   function getScores(){
     try{
-      return JSON.parse(localStorage.getItem(STORAGE_SCORES_KEY)) || { typing: [], bomb: [], shooter: [] };
+      return JSON.parse(localStorage.getItem(STORAGE_SCORES_KEY)) || { typing: [], bomb: [], shooter: [], re3: [] };
     }catch{
-      return { typing: [], bomb: [], shooter: [] };
+      return { typing: [], bomb: [], shooter: [], re3: [] };
     }
   }
   function saveScores(scores){
@@ -74,6 +75,7 @@
     renderBoard(lbTypingEl, scores.typing, 'No racers yet. Be the first!');
     renderBoard(lbBombEl, scores.bomb, 'No agents yet. Be the first!');
     renderBoard(lbShooterEl, scores.shooter, 'No pilots yet. Be the first!');
+    renderBoard(lbRe3El, scores.re3, 'No fighters yet. Be the first!');
   }
 
   function showToast(msg){

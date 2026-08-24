@@ -29,7 +29,42 @@
 
   <div class="damage-flash" id="damage-flash"></div>
 
-  <canvas id="game-canvas" width="700" height="500"></canvas>
+  <canvas id="game-canvas"></canvas>
+
+  <!-- PIXEL BATTLESHIP - follows the player's canvas position via JS,
+       tinted per ship selection with a CSS hue-rotate filter. -->
+  <div class="player-mount" id="player-mount">
+    <div class="ship-inner">
+      <div class="hull"></div>
+      <div class="cockpit"></div>
+
+      <div class="wing-left"></div>
+      <div class="wing-right"></div>
+
+      <div class="wing-line line1"></div>
+      <div class="wing-line line2"></div>
+
+      <div class="gun gun-left"></div>
+      <div class="gun gun-right"></div>
+
+      <div class="panel panel-left"></div>
+      <div class="panel panel-right"></div>
+
+      <div class="engine engine-left"></div>
+      <div class="engine engine-right"></div>
+
+      <div class="main-engine"></div>
+      <div class="flame"></div>
+
+      <div class="light light1"></div>
+      <div class="light light2"></div>
+
+      <div class="red-light red1"></div>
+      <div class="red-light red2"></div>
+
+      <div class="antenna"></div>
+    </div>
+  </div>
 
   <!-- START SCREEN -->
   <div class="overlay" id="start-overlay">

@@ -1,0 +1,89 @@
+*{box-sizing:border-box}
+body{
+  margin:0;background:#090909;color:#eee;font-family:Arial,sans-serif;
+  overflow:hidden;user-select:none
+}
+#game{
+  width:100vw;height:100vh;position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 40%,#242018 0,#100f0d 42%,#050505 100%);
+}
+#fog{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(255,255,255,.02),transparent 35%,rgba(0,0,0,.55));
+}
+#world{
+  position:absolute;left:0;top:0;width:100%;height:100%;
+  background-color:#0a0908;
+  background-image:
+    radial-gradient(circle at 25% 55%,rgba(76,63,44,.22),transparent 20%),
+    radial-gradient(circle at 72% 38%,rgba(90,65,45,.16),transparent 22%),
+    url('rpd_bg.png');
+  background-repeat:no-repeat,no-repeat,no-repeat;
+  background-position:left,left,center bottom;
+  background-size:auto,auto,cover;
+  image-rendering:pixelated;
+}
+#arena{position:absolute;left:5%;right:5%;bottom:9%;height:12%;
+  border-bottom:3px solid #574c3c;
+  background:linear-gradient(to top,rgba(80,70,55,.16),transparent);
+}
+.character{
+  position:absolute;bottom:12%;height:52%;width:24%;
+  display:flex;align-items:flex-end;justify-content:center;
+  transition:left .08s linear;
+}
+.character::before{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-2%;
+  transform:translateX(-50%);
+  width:58%;height:11%;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.65) 0%,rgba(0,0,0,.35) 45%,transparent 78%);
+  filter:blur(2px);
+  pointer-events:none;
+}
+#leon{left:420px}
+#mrx{left:1050px}
+.character img{max-height:100%;max-width:100%;image-rendering:pixelated;object-fit:contain}
+#leon img{transform:scaleX(1)}
+#mrx img{transform:scaleX(-1)}
+.hidden{display:none!important}
+
+#hud{position:absolute;left:3%;right:3%;top:3%;display:flex;justify-content:space-between;gap:30px}
+.panel{width:38%;background:rgba(0,0,0,.58);padding:12px 16px;border:1px solid #40382d}
+.name{font-weight:800;letter-spacing:2px;margin-bottom:7px}
+.bar{height:16px;background:#241b18;border:1px solid #59483e}
+.fill{height:100%;width:100%;transition:width .2s}
+#playerHp{background:#9b2929}
+#bossHp{background:#b0442e}
+.stats{font-size:12px;color:#aaa;margin-top:6px}
+
+#controls{position:absolute;bottom:3%;left:50%;transform:translateX(-50%);
+  text-align:center;color:#bbb;font-size:14px}
+kbd{background:#222;border:1px solid #555;padding:5px 10px;margin:0 3px;color:#fff}
+
+#message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;font-weight:900;font-size:44px;letter-spacing:5px;
+  text-shadow:0 3px 15px #000;opacity:0;transition:opacity .15s}
+#message.show{opacity:1}
+
+#start,#end{
+  position:absolute;inset:0;background:rgba(0,0,0,.84);z-index:20;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center
+}
+h1{font-size:48px;letter-spacing:7px;margin:0 0 10px}
+#endTitle{
+  font-size:38px;letter-spacing:3px;text-transform:uppercase;
+  text-shadow:0 0 18px rgba(176,68,46,.85),0 0 40px rgba(0,0,0,.9);
+  animation:flicker 2.6s infinite;
+}
+@keyframes flicker{
+  0%,19%,21%,23%,53%,55%,100%{opacity:1}
+  20%,22%,54%{opacity:.55}
+}
+button{
+  background:#252018;color:#fff;border:1px solid #776348;padding:14px 30px;
+  font-size:16px;cursor:pointer;margin-top:20px
+}
+button:hover{background:#382f24}
+.small{color:#aaa;max-width:520px;line-height:1.5}

@@ -20,11 +20,10 @@ html, body{
 
 canvas{
   display: block;
-   background: url('space.jpg') center/cover no-repeat;
-  max-width: 100%;
-  max-height: 100%;
+  background: url('space.jpg') center/cover no-repeat;
+  width: 100vw;
+  height: 100vh;
   touch-action: none;
-  transition: background 0.8s ease;
 }
 
 /* ===== HUD ===== */
@@ -125,6 +124,441 @@ canvas{
 @keyframes flashHit{
   0%{ opacity: 1; }
   100%{ opacity: 0; }
+}
+
+/* =========================================================
+   PIXEL BATTLESHIP (player) — layered on top of the canvas
+   and repositioned every frame by space.js to track player.x/y.
+   Scaled down from its native 420x430 art to fit the play field.
+========================================================= */
+
+.player-mount{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: none; /* space.js switches this to block on start */
+  transition: opacity 0.08s linear;
+}
+.player-mount.flicker{ opacity: 0; }
+
+.player-mount .ship-inner{
+  position: absolute;
+  left: -42px;
+  top: -43px;
+  width: 420px;
+  height: 430px;
+  transform-origin: 0 0;
+  transform: scale(0.2);
+
+  filter:
+    drop-shadow(0 0 12px rgba(0,190,255,.5))
+    drop-shadow(0 20px 25px rgba(0,0,0,.8));
+}
+
+.ship-inner .hull{
+  position:absolute;
+  left:140px;
+  top:45px;
+  width:140px;
+  height:290px;
+  background:
+    linear-gradient(
+      90deg,
+      #151c22 0%,
+      #39464e 12%,
+      #aab7bd 25%,
+      #e4ebed 38%,
+      #7d8b91 50%,
+      #e9f0f2 62%,
+      #a1adb2 75%,
+      #3a464d 88%,
+      #11181e 100%
+    );
+  clip-path:polygon(
+    50% 0, 70% 12%, 76% 30%, 100% 70%, 85% 70%, 75% 91%,
+    63% 91%, 50% 100%, 37% 91%, 25% 91%, 15% 70%, 0 70%,
+    24% 30%, 30% 12%
+  );
+  box-shadow:
+    inset 8px 0 #182128,
+    inset -8px 0 #182128,
+    inset 0 0 20px rgba(255,255,255,.25);
+}
+
+.ship-inner .hull::before{
+  content:"";
+  position:absolute;
+  left:45px;
+  top:25px;
+  width:50px;
+  height:230px;
+  background:
+    linear-gradient(90deg, #3a474e, #dce5e8 35%, #69767d 50%, #e9f1f3 65%, #354149);
+  clip-path:polygon(50% 0, 100% 18%, 85% 78%, 50% 100%, 15% 78%, 0 18%);
+}
+
+.ship-inner .cockpit{
+  position:absolute;
+  left:174px;
+  top:77px;
+  width:72px;
+  height:95px;
+  background:
+    linear-gradient(135deg, #031522, #0b5470 25%, #50eaff 45%, #0b4b68 65%, #020b14);
+  clip-path:polygon(50% 0, 90% 25%, 100% 80%, 50% 100%, 0 80%, 10% 25%);
+  border:5px solid #1a252c;
+  box-shadow:
+    0 0 12px #00d9ff,
+    inset 0 0 20px #00a9df;
+}
+
+.ship-inner .cockpit::before{
+  content:"";
+  position:absolute;
+  width:15px;
+  height:55px;
+  left:15px;
+  top:10px;
+  background:rgba(255,255,255,.5);
+  transform:skewX(-15deg);
+  opacity:.65;
+}
+
+.ship-inner .wing-left{
+  position:absolute;
+  left:5px;
+  top:150px;
+  width:180px;
+  height:135px;
+  background:
+    linear-gradient(145deg, #101820 0%, #46545c 20%, #a9b6bb 35%, #5d6b73 55%, #202a31 75%, #0c1217);
+  clip-path:polygon(78% 0, 100% 20%, 82% 42%, 72% 62%, 25% 80%, 0 100%, 10% 55%, 42% 20%);
+  box-shadow: inset 0 0 12px #dce7eb33;
+}
+
+.ship-inner .wing-right{
+  position:absolute;
+  right:5px;
+  top:150px;
+  width:180px;
+  height:135px;
+  background:
+    linear-gradient(215deg, #101820 0%, #46545c 20%, #a9b6bb 35%, #5d6b73 55%, #202a31 75%, #0c1217);
+  clip-path:polygon(22% 0, 0 20%, 18% 42%, 28% 62%, 75% 80%, 100% 100%, 90% 55%, 58% 20%);
+}
+
+.ship-inner .wing-line{
+  position:absolute;
+  width:120px;
+  height:5px;
+  background:#17232a;
+  opacity:.8;
+}
+.ship-inner .line1{ left:30px; top:205px; transform:rotate(-20deg); }
+.ship-inner .line2{ right:30px; top:205px; transform:rotate(20deg); }
+
+.ship-inner .gun{
+  position:absolute;
+  width:18px;
+  height:85px;
+  background: linear-gradient(90deg, #10171b, #65747b, #1b252b);
+  border:3px solid #0b1014;
+  box-shadow: inset 0 0 6px white;
+}
+.ship-inner .gun::after{
+  content:"";
+  position:absolute;
+  bottom:-8px;
+  left:3px;
+  width:6px;
+  height:12px;
+  background:#ff4a28;
+  box-shadow: 0 0 8px #ff3b18;
+}
+.ship-inner .gun-left{ left:72px; top:190px; transform:rotate(-12deg); }
+.ship-inner .gun-right{ right:72px; top:190px; transform:rotate(12deg); }
+
+.ship-inner .engine{
+  position:absolute;
+  top:292px;
+  width:65px;
+  height:90px;
+  background: linear-gradient(90deg, #10171c, #56656d, #1a2329);
+  border:4px solid #11181d;
+  box-shadow: inset 0 0 15px #000;
+}
+.ship-inner .engine-left{ left:80px; }
+.ship-inner .engine-right{ right:80px; }
+
+.ship-inner .engine::before{
+  content:"";
+  position:absolute;
+  width:35px;
+  height:50px;
+  left:11px;
+  top:17px;
+  background:
+    radial-gradient(ellipse, #ffffff 0%, #7ff7ff 12%, #00aaff 30%, #0055aa 55%, #07101c 75%);
+  box-shadow: 0 0 15px #00d9ff, 0 0 30px #008cff;
+}
+
+.ship-inner .main-engine{
+  position:absolute;
+  left:165px;
+  top:300px;
+  width:90px;
+  height:100px;
+  background: linear-gradient(90deg, #10171c, #536168, #11191f);
+  border:5px solid #0b1115;
+  clip-path:polygon(10% 0, 90% 0, 100% 75%, 50% 100%, 0 75%);
+}
+
+.ship-inner .flame{
+  position:absolute;
+  left:180px;
+  top:375px;
+  width:60px;
+  height:55px;
+  background:
+    linear-gradient(
+      #ffffff 0 15%,
+      #7ffcff 15% 30%,
+      #00cfff 30% 55%,
+      #0077ff 55% 75%,
+      transparent 75%
+    );
+  clip-path:polygon(25% 0, 75% 0, 68% 35%, 100% 35%, 50% 100%, 0 35%, 32% 35%);
+  filter: drop-shadow(0 0 8px #00eaff) drop-shadow(0 0 20px #008cff);
+  animation: flame .12s infinite alternate;
+}
+@keyframes flame{
+  from{ transform:scaleY(.75); }
+  to{ transform:scaleY(1.15); }
+}
+
+.ship-inner .panel{
+  position:absolute;
+  width:30px;
+  height:65px;
+  background: linear-gradient(90deg, #151d22, #7b898f, #242e34);
+  border:2px solid #182228;
+}
+.ship-inner .panel-left{ left:130px; top:205px; }
+.ship-inner .panel-right{ right:130px; top:205px; }
+
+.ship-inner .light{
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:1px;
+  background:#00efff;
+  box-shadow: 0 0 8px #00efff, 0 0 18px #00aaff;
+}
+.ship-inner .light1{ left:125px; top:230px; }
+.ship-inner .light2{ right:125px; top:230px; }
+
+.ship-inner .red-light{
+  position:absolute;
+  width:8px;
+  height:8px;
+  background:#ff3b25;
+  box-shadow:0 0 12px #ff2500;
+}
+.ship-inner .red1{ left:40px; top:230px; }
+.ship-inner .red2{ right:40px; top:230px; }
+
+.ship-inner .antenna{
+  position:absolute;
+  left:205px;
+  top:25px;
+  width:10px;
+  height:45px;
+  background:#27343b;
+}
+.ship-inner .antenna::after{
+  content:"";
+  position:absolute;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  top:-8px;
+  left:-1px;
+  background:#ff4433;
+  box-shadow:0 0 12px #ff2c1b;
+}
+
+/* =========================================================
+   ENEMY SHIPS — the pixel spaceship art, reused as enemy craft.
+   One .enemy-mount is spawned per enemy and repositioned every
+   frame by space.js to track that enemy's canvas x/y. Recolored
+   per enemy type with hue-rotate + flipped to face downward.
+========================================================= */
+
+.enemy-mount{
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.enemy-mount .enemy-ship{
+  position: absolute;
+  left: -120px;
+  top: -130px;
+  width: 240px;
+  height: 260px;
+  transform-origin: 50% 50%;
+  transform: scale(0.15) rotate(180deg);
+}
+
+.enemy-mount.type-drone .enemy-ship{
+  transform: scale(0.14) rotate(180deg);
+  filter: hue-rotate(170deg) saturate(1.3) drop-shadow(0 0 10px #ff3355);
+}
+.enemy-mount.type-shooter .enemy-ship{
+  transform: scale(0.16) rotate(180deg);
+  filter: hue-rotate(90deg) saturate(1.3) drop-shadow(0 0 10px #b347ff);
+}
+.enemy-mount.type-bomber .enemy-ship{
+  transform: scale(0.22) rotate(180deg);
+  filter: hue-rotate(205deg) saturate(1.3) drop-shadow(0 0 12px #ff9500);
+}
+
+.enemy-ship .body{
+  position:absolute;
+  left:80px;
+  top:30px;
+  width:80px;
+  height:160px;
+  background:
+    linear-gradient(
+      90deg,
+      #394752 0 15%,
+      #b9c7cc 15% 30%,
+      #f4ffff 30% 70%,
+      #b9c7cc 70% 85%,
+      #394752 85%
+    );
+  clip-path:polygon(
+    50% 0, 72% 20%, 72% 48%, 100% 70%, 82% 70%, 70% 100%,
+    50% 82%, 30% 100%, 18% 70%, 0 70%, 28% 48%, 28% 20%
+  );
+}
+
+.enemy-ship .cockpit{
+  position:absolute;
+  left:105px;
+  top:58px;
+  width:30px;
+  height:45px;
+  background:
+    linear-gradient(
+      90deg,
+      #064b68 0 20%, #49eaff 20% 50%, #08799a 50% 80%, #022b43 80%
+    );
+  border:5px solid #19252d;
+  box-shadow: 0 0 8px #00eaff, inset 0 0 8px #aaffff;
+}
+
+.enemy-ship .wing-left{
+  position:absolute;
+  left:15px;
+  top:105px;
+  width:100px;
+  height:75px;
+  background:
+    linear-gradient(
+      135deg,
+      #27343c 0 25%, #72828a 25% 45%, #c8d4d8 45% 65%, #46545c 65%
+    );
+  clip-path:polygon(70% 0, 100% 25%, 80% 65%, 35% 65%, 0 100%, 10% 45%);
+}
+
+.enemy-ship .wing-right{
+  position:absolute;
+  right:15px;
+  top:105px;
+  width:100px;
+  height:75px;
+  background:
+    linear-gradient(
+      45deg,
+      #27343c 0 25%, #72828a 25% 45%, #c8d4d8 45% 65%, #46545c 65%
+    );
+  clip-path:polygon(30% 0, 0 25%, 20% 65%, 65% 65%, 100% 100%, 90% 45%);
+}
+
+.enemy-ship .wing-left::after,
+.enemy-ship .wing-right::after{
+  content:"";
+  position:absolute;
+  width:10px;
+  height:10px;
+  background:#ff4538;
+  box-shadow:0 0 8px #ff3020;
+}
+.enemy-ship .wing-left::after{ left:20px; top:42px; }
+.enemy-ship .wing-right::after{ right:20px; top:42px; }
+
+.enemy-ship .engine{
+  position:absolute;
+  left:70px;
+  top:175px;
+  width:100px;
+  height:45px;
+  display:flex;
+  justify-content:space-around;
+}
+.enemy-ship .engine span{
+  width:20px;
+  height:35px;
+  background:#26343c;
+  border:4px solid #111b20;
+}
+
+.enemy-ship .flame{
+  position:absolute;
+  top:208px;
+  left:84px;
+  width:70px;
+  height:55px;
+  background:
+    linear-gradient(
+      #eaffff 0 15%, #29e8ff 15% 40%, #008cff 40% 70%, transparent 70%
+    );
+  clip-path:polygon(15% 0, 85% 0, 70% 30%, 100% 30%, 50% 100%, 0 30%, 30% 30%);
+  filter: drop-shadow(0 0 10px #00cfff);
+  animation: enemyEngineFlicker 0.12s infinite alternate;
+}
+@keyframes enemyEngineFlicker{
+  from{ transform:scaleY(.8); }
+  to{ transform:scaleY(1.15); }
+}
+
+.enemy-ship .pixel{
+  position:absolute;
+  width:10px;
+  height:10px;
+  background:#202b32;
+}
+.enemy-ship .p1{ left:75px; top:95px; }
+.enemy-ship .p2{ left:65px; top:115px; }
+.enemy-ship .p3{ left:55px; top:135px; }
+.enemy-ship .p4{ right:75px; top:95px; }
+.enemy-ship .p5{ right:65px; top:115px; }
+.enemy-ship .p6{ right:55px; top:135px; }
+
+.enemy-ship .nose-light{
+  position:absolute;
+  left:116px;
+  top:22px;
+  width:8px;
+  height:8px;
+  background:#00eaff;
+  box-shadow:0 0 12px #00eaff;
 }
 
 /* ===== overlays ===== */

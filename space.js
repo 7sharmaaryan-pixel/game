@@ -1,7 +1,17 @@
 (function(){
   const canvas = document.getElementById('game-canvas');
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+  const shooterWrap = document.querySelector('.shooter-wrap');
+
+  // Canvas now fills the whole viewport instead of a fixed 700x500 box.
+  let W = window.innerWidth, H = window.innerHeight;
+  function resizeCanvas(){
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+  }
+  resizeCanvas();
 
   const healthFill = document.getElementById('health-fill');
   const hudLevel = document.getElementById('hud-level');
@@ -21,6 +31,7 @@
   const musicToggle = document.getElementById('music-toggle');
   const damageFlash = document.getElementById('damage-flash');
   const shipOptions = document.getElementById('ship-options');
+  const playerMount = document.getElementById('player-mount');
 
   if('ontouchstart' in window){
     touchControls.classList.add('show');
@@ -68,65 +79,18 @@
     }
   });
 
-  /* ================= SHIP DESIGNS ================= */
-  // Each design is a draw function called with the canvas context already
-  // translated to the player's position. Index matches data-ship on the
-  // picker buttons.
-  const SHIP_DESIGNS = [
-    { // 0 - Interceptor (classic dart)
-      color: '#39ff88',
-      draw(c){
-        c.beginPath();
-        c.moveTo(0,-16);
-        c.lineTo(14,14);
-        c.lineTo(0,8);
-        c.lineTo(-14,14);
-        c.closePath();
-        c.fill();
-      }
-    },
-    { // 1 - Falcon (wide swept wings)
-      color: '#00f0ff',
-      draw(c){
-        c.beginPath();
-        c.moveTo(0,-18);
-        c.lineTo(6,2);
-        c.lineTo(20,16);
-        c.lineTo(4,10);
-        c.lineTo(0,16);
-        c.lineTo(-4,10);
-        c.lineTo(-20,16);
-        c.lineTo(-6,2);
-        c.closePath();
-        c.fill();
-      }
-    },
-    { // 2 - Vanguard (armored diamond hull)
-      color: '#ff2ec4',
-      draw(c){
-        c.beginPath();
-        c.moveTo(0,-17);
-        c.lineTo(12,-2);
-        c.lineTo(9,14);
-        c.lineTo(0,9);
-        c.lineTo(-9,14);
-        c.lineTo(-12,-2);
-        c.closePath();
-        c.fill();
-        c.beginPath();
-        c.moveTo(0,-6);
-        c.lineTo(5,2);
-        c.lineTo(0,10);
-        c.lineTo(-5,2);
-        c.closePath();
-        c.fillStyle = '#fff';
-        c.globalAlpha = 0.85;
-        c.fill();
-        c.globalAlpha = 1;
-      }
-    }
-  ];
+  /* ================= SHIP SELECTION ================= */
+  // The player's visible ship is now the detailed pixel-art battleship
+  // (rendered as DOM markup layered over the canvas — see .player-mount in
+  // space.css). Each picker option just retints that same art with a
+  // hue-rotate filter so the three choices still look distinct.
+  const SHIP_HUES = [-40, 0, 130]; // 0: Interceptor(greenish) 1: Falcon(cyan, native color) 2: Vanguard(pink)
   let selectedShip = 0;
+
+  function applyShipTint(){
+    playerMount.style.filter = 'hue-rotate(' + SHIP_HUES[selectedShip] + 'deg)';
+  }
+  applyShipTint();
 
   shipOptions.addEventListener('click', (e) => {
     const btn = e.target.closest('.ship-opt');
@@ -134,13 +98,17 @@
     selectedShip = parseInt(btn.dataset.ship, 10);
     [...shipOptions.querySelectorAll('.ship-opt')].forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    applyShipTint();
   });
 
   /* ================= LEVEL / SECTOR CONFIG ================= */
+  // Sector backgrounds no longer swap the canvas background - the pinned
+  // space.jpg image (set in space.css) stays in place for the whole run.
+  // Sector data below only affects difficulty pacing and HUD text now.
   const LEVELS = [
-    { threshold: 0,   name: 'SECTOR 1', sub: 'Scout drones inbound. Stay sharp.',      bg: 'radial-gradient(ellipse at center, #0d0a18 0%, #05030a 70%)', spawnInterval: 70,  bomberChance: 0,    shooterChance: 0.18 },
-    { threshold: 150, name: 'SECTOR 2', sub: 'Enemy resistance is intensifying...',    bg: 'radial-gradient(ellipse at center, #0a1428 0%, #05030a 70%)', spawnInterval: 54,  bomberChance: 0.14, shooterChance: 0.24 },
-    { threshold: 350, name: 'SECTOR 3', sub: 'Heavy bombers detected. Good luck.',     bg: 'radial-gradient(ellipse at center, #240a14 0%, #05030a 70%)', spawnInterval: 42,  bomberChance: 0.22, shooterChance: 0.3  }
+    { threshold: 0,   name: 'SECTOR 1', sub: 'Scout drones inbound. Stay sharp.',      spawnInterval: 70,  bomberChance: 0,    shooterChance: 0.18 },
+    { threshold: 150, name: 'SECTOR 2', sub: 'Enemy resistance is intensifying...',    spawnInterval: 54,  bomberChance: 0.14, shooterChance: 0.24 },
+    { threshold: 350, name: 'SECTOR 3', sub: 'Heavy bombers detected. Good luck.',     spawnInterval: 42,  bomberChance: 0.22, shooterChance: 0.3  }
   ];
   let levelIndex = 0;
   let levelTransitionActive = false;
@@ -181,11 +149,11 @@
   function resetGame(){
     player.x = W/2; player.y = H - 50; player.cooldown = 0;
     player.hp = player.maxHp; player.invuln = 0;
+    enemies.forEach(removeEnemyMount);
     bullets = []; enemyBullets = []; enemies = []; particles = [];
     score = 0; frame = 0; spawnTimer = 0; difficultyTimer = 0;
     levelIndex = 0; levelTransitionActive = false;
     spawnInterval = LEVELS[0].spawnInterval;
-    canvas.style.background = LEVELS[0].bg;
     updateHud();
     initStars();
   }
@@ -209,7 +177,6 @@
     if(next < LEVELS.length && score >= LEVELS[next].threshold){
       levelIndex = next;
       spawnInterval = LEVELS[levelIndex].spawnInterval;
-      canvas.style.background = LEVELS[levelIndex].bg;
       showLevelTransition();
     }
   }
@@ -226,6 +193,34 @@
     }, 1500);
   }
 
+  // Enemies are rendered as the pixel-art spaceship (see .enemy-mount in
+  // space.css) instead of canvas triangles, recolored per type and flipped
+  // to face the player. Each enemy object carries a reference to its DOM
+  // mount (`el`), which is created here and removed wherever the enemy
+  // leaves play (killed, off-screen, or collided with the player).
+  function createEnemyMount(type){
+    const mount = document.createElement('div');
+    mount.className = 'enemy-mount type-' + type;
+    mount.innerHTML =
+      '<div class="enemy-ship">' +
+        '<div class="body"></div>' +
+        '<div class="cockpit"></div>' +
+        '<div class="wing-left"></div>' +
+        '<div class="wing-right"></div>' +
+        '<div class="engine"><span></span><span></span><span></span></div>' +
+        '<div class="flame"></div>' +
+        '<div class="pixel p1"></div><div class="pixel p2"></div><div class="pixel p3"></div>' +
+        '<div class="pixel p4"></div><div class="pixel p5"></div><div class="pixel p6"></div>' +
+        '<div class="nose-light"></div>' +
+      '</div>';
+    shooterWrap.appendChild(mount);
+    return mount;
+  }
+
+  function removeEnemyMount(e){
+    if(e.el){ e.el.remove(); e.el = null; }
+  }
+
   function spawnEnemy(){
     const cfg = LEVELS[levelIndex];
     const roll = Math.random();
@@ -233,13 +228,16 @@
     if(roll < cfg.bomberChance) type = 'bomber';
     else if(roll < cfg.bomberChance + cfg.shooterChance) type = 'shooter';
 
-    let w=28,h=22,speed=1.4+Math.random()*1.1,hp=1,hue='#00f0ff',dmg=18;
-    if(type === 'shooter'){ speed = 1.1+Math.random()*0.6; hp = 2; hue = '#ff2ec4'; dmg = 20; }
-    if(type === 'bomber'){ w=42; h=34; speed = 0.7+Math.random()*0.4; hp = 4; hue = '#ff8a1a'; dmg = 40; }
+    // Enemy palette kept distinct from the player's cyan hull/engine glow
+    // and cyan bullets: drones = red, shooters = purple, bombers = amber.
+    let w=28,h=22,speed=1.4+Math.random()*1.1,hp=1,hue='#ff3355',dmg=18;
+    if(type === 'shooter'){ speed = 1.1+Math.random()*0.6; hp = 2; hue = '#b347ff'; dmg = 20; }
+    if(type === 'bomber'){ w=42; h=34; speed = 0.7+Math.random()*0.4; hp = 4; hue = '#ff9500'; dmg = 40; }
 
     enemies.push({
       x: Math.random()*(W-40)+20, y: -20, w, h, speed, type, hp, hue, dmg,
-      fireTimer: Math.random()*90 + 40
+      fireTimer: Math.random()*90 + 40,
+      el: createEnemyMount(type)
     });
   }
 
@@ -283,6 +281,7 @@
     running = false;
     cancelAnimationFrame(raf);
     stopMusic();
+    playerMount.style.display = 'none';
 
     finalScoreEl.textContent = 'SCORE ' + score;
     finalLevelEl.textContent = 'REACHED ' + LEVELS[levelIndex].name;
@@ -347,7 +346,12 @@
       }
     });
 
-    enemies = enemies.filter(e => e.y <= H+20);
+    const survivors = [];
+    for(const e of enemies){
+      if(e.y <= H+20) survivors.push(e);
+      else removeEnemyMount(e); // drifted off the bottom unkilled
+    }
+    enemies = survivors;
 
     for(let i = enemies.length-1; i>=0; i--){
       const e = enemies[i];
@@ -359,6 +363,7 @@
           if(e.hp <= 0){
             score += e.type === 'bomber' ? 40 : (e.type === 'shooter' ? 25 : 10);
             spawnParticles(e.x, e.y, e.hue, e.type === 'bomber' ? 26 : 16);
+            removeEnemyMount(e);
             enemies.splice(i,1);
             updateHud();
             checkLevelUp();
@@ -372,6 +377,7 @@
       const e = enemies[i];
       if(rectsOverlap(e, player)){
         const dmg = e.dmg;
+        removeEnemyMount(e);
         enemies.splice(i,1);
         playerHit(dmg);
       }
@@ -389,6 +395,37 @@
     particles = particles.filter(p => p.life > 0);
   }
 
+  // Keeps the DOM battleship glued to the player's canvas position, and
+  // rescales it if the canvas is being displayed smaller than its native
+  // 700x500 resolution (e.g. on a narrow phone screen).
+  function syncShipPosition(){
+    const canvasRect = canvas.getBoundingClientRect();
+    const wrapRect = canvas.parentElement.getBoundingClientRect();
+    const scale = canvasRect.width / W;
+
+    const left = (canvasRect.left - wrapRect.left) + player.x * scale;
+    const top = (canvasRect.top - wrapRect.top) + player.y * scale;
+
+    playerMount.style.left = left + 'px';
+    playerMount.style.top = top + 'px';
+    playerMount.style.transform = 'scale(' + scale + ')';
+
+    const flicker = player.invuln > 0 && Math.floor(frame/3) % 2 === 0;
+    playerMount.classList.toggle('flicker', flicker);
+
+    // Same trick, applied to every live enemy's DOM-mounted ship.
+    for(const e of enemies){
+      if(!e.el) continue;
+      const eLeft = (canvasRect.left - wrapRect.left) + e.x * scale;
+      const eTop = (canvasRect.top - wrapRect.top) + e.y * scale;
+      e.el.style.left = eLeft + 'px';
+      e.el.style.top = eTop + 'px';
+      e.el.style.setProperty('--scale', scale);
+      e.el.style.opacity = scale ? 1 : 0;
+      e.el.style.transform = 'scale(' + scale + ')';
+    }
+  }
+
   function draw(){
     ctx.clearRect(0,0,W,H);
 
@@ -399,18 +436,7 @@
       ctx.fill();
     });
 
-    // player ship (flickers while invulnerable after a hit)
-    const flicker = player.invuln > 0 && Math.floor(frame/3) % 2 === 0;
-    if(!flicker){
-      const ship = SHIP_DESIGNS[selectedShip];
-      ctx.save();
-      ctx.translate(player.x, player.y);
-      ctx.shadowColor = ship.color;
-      ctx.shadowBlur = 14;
-      ctx.fillStyle = ship.color;
-      ship.draw(ctx);
-      ctx.restore();
-    }
+    syncShipPosition();
 
     ctx.fillStyle = '#00f0ff';
     ctx.shadowColor = '#00f0ff';
@@ -421,32 +447,8 @@
     ctx.shadowColor = '#ff2ec4';
     enemyBullets.forEach(b => ctx.fillRect(b.x-b.w/2, b.y-b.h/2, b.w, b.h));
 
-    enemies.forEach(e => {
-      ctx.save();
-      ctx.translate(e.x, e.y);
-      ctx.shadowColor = e.hue;
-      ctx.shadowBlur = 12;
-      ctx.fillStyle = e.hue;
-      if(e.type === 'bomber'){
-        ctx.beginPath();
-        ctx.moveTo(0, 18);
-        ctx.lineTo(20, -6);
-        ctx.lineTo(10, -16);
-        ctx.lineTo(-10, -16);
-        ctx.lineTo(-20, -6);
-        ctx.closePath();
-        ctx.fill();
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(0, 14);
-        ctx.lineTo(14, -12);
-        ctx.lineTo(0, -4);
-        ctx.lineTo(-14, -12);
-        ctx.closePath();
-        ctx.fill();
-      }
-      ctx.restore();
-    });
+    // Enemies are the real pixel-art DOM ships now (positioned in
+    // syncShipPosition), so there's nothing left to paint for them here.
 
     particles.forEach(p => {
       ctx.globalAlpha = Math.max(p.life/30, 0);
@@ -471,6 +473,8 @@
     gameoverOverlay.style.display = 'none';
     levelOverlay.style.display = 'none';
     running = true;
+    playerMount.style.display = 'block';
+    syncShipPosition();
     cancelAnimationFrame(raf);
     raf = requestAnimationFrame(loop);
     playMusic();
@@ -500,6 +504,15 @@
   bindHold(document.getElementById('touch-left'), () => keys.left = true, () => keys.left = false);
   bindHold(document.getElementById('touch-right'), () => keys.right = true, () => keys.right = false);
   bindHold(document.getElementById('touch-fire'), () => keys.fire = true, () => keys.fire = false);
+
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    player.x = Math.max(20, Math.min(W-20, player.x));
+    if(!running) player.y = H - 50;
+    initStars();
+    if(running) syncShipPosition();
+    else draw();
+  });
 
   initStars();
   draw();
